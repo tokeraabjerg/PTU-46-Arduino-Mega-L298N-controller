@@ -1,7 +1,7 @@
 # Dual Stepper Motor Control with Arduino
 
 ## Overview
-This project enables precise control of two stepper motors (Motor A and Motor B) using an Arduino Mega. It features homing sequences, relative and absolute movements, direction inversion for Motor B, and limit switch integration to ensure accurate positioning.
+This project enables precise control of two stepper motors using an Arduino Mega. It features homing sequences, relative and absolute movements, direction inversion for Motor B, and limit switch integration to ensure accurate positioning. The project is tailor made to replace a proprietary and outdated controller for the Pan/Tilt unit PTU-46.
 
 ## Features
 - **Dual Motor Control:** Independently control two stepper motors.
@@ -16,7 +16,7 @@ This project enables precise control of two stepper motors (Motor A and Motor B)
 - **2 Stepper Motors**
 - **2 Stepper Motor Drivers**
 - **2 Limit Switches**
-- **4 LEDs** (optional for status indicators)
+- **2 LEDs** (optional for status indicators)
 - **Connecting Wires**
 - **Power Supply** suitable for motors
 
@@ -31,11 +31,6 @@ This project enables precise control of two stepper motors (Motor A and Motor B)
    - (Optional) Connect LEDs for status indication.
    - Ensure power connections are secure and appropriate for motor specifications.
 
-2. **Code Deployment:**
-   - Place `main.cpp` in the `src` folder.
-   - Place `StepperMotor.h` and `StepperMotor.cpp` in the `lib/StepperMotor` directory.
-   - Upload the code to the Arduino Mega using PlatformIO or Arduino IDE.
-
 ## Usage
 - **Homing:** Automatically performed on startup. To re-home, send the `HOME` command via Serial Monitor.
 - **Commands:**
@@ -44,11 +39,6 @@ This project enables precise control of two stepper motors (Motor A and Motor B)
   - `MOVE_ABS A <position>`: Move Motor A to an absolute position.
   - `MOVE_ABS B <position>`: Move Motor B to an absolute position.
   - `GETPOS`: Retrieve current positions of both motors.
-
-## Troubleshooting
-- **Incorrect Direction:** Ensure `setInvertDirection(true)` is set for Motor B.
-- **Homing Issues:** Verify limit switch placement and wiring. Ensure correct homing directions in code.
-- **No Movement:** Check power supply and motor connections. Confirm drivers are enabled.
 
 ## License
 This project is open-source and available under the [MIT License](LICENSE).
