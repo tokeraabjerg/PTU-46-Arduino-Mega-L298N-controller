@@ -23,6 +23,10 @@ const long MAX_POS_A = 5800;
 const long MIN_POS_B = 0;
 const long MAX_POS_B = 2000;
 
+// Define Starting Positions
+const long START_POS_A = 2716;
+const long START_POS_B = 634;
+
 // Define Stepper Motors
 // MotorA (Driver A)
 StepperMotor motorA(
@@ -89,8 +93,8 @@ void setup() {
     motorA.home(false, LIMIT_SWITCH_A, HIGH);
     motorA.setCurrentPosition(MIN_POS_A); // Set position to minimum after homing
 
-    // Move Motor A by 2700 steps
-    //motorA.moveSteps(2700, true); // Assuming true is the forward direction
+    // Move Motor A by START_POS_A steps
+    motorA.moveSteps(START_POS_A, true); // Assuming true is the forward direction
 
     motorA_homed = true; // Set homed flag for Motor A
     Serial.println("Motor A homed.");
@@ -99,8 +103,8 @@ void setup() {
     motorB.home(false, LIMIT_SWITCH_B, HIGH);
     motorB.setCurrentPosition(MIN_POS_B); // Set position to maximum after homing
 
-    // Move Motor B by 654 steps
-    //motorB.moveSteps(634, true); // Assuming true is the forward direction
+    // Move Motor B by START_POS_B steps
+    motorB.moveSteps(START_POS_B, true); // Assuming true is the forward direction
 
     motorB_homed = true; // Set homed flag for Motor B
     Serial.println("Motor B homed.");
@@ -143,37 +147,56 @@ void handleCommand(String commandLine, EthernetClient& client) {
         motorA.home(false, LIMIT_SWITCH_A, HIGH);
         motorA.setCurrentPosition(MIN_POS_A);
         motorA_homed = true;
+        // Move Motor A by START_POS_A steps
+        motorA.moveSteps(START_POS_A, true); // Assuming true is the forward direction
+
         motorB.home(false, LIMIT_SWITCH_B, HIGH);
         motorB.setCurrentPosition(MIN_POS_B);
         motorB_homed = true;
-        client.println("Homing Complete.");
+        // Move Motor B by START_POS_B steps
+        motorB.moveSteps(START_POS_B, true); // Assuming true is the forward direction
+        client.println("\"success\", \"Homing Complete.\"");
     } else if (command == "MOVE_REL") {
         if (param1 == "A") {
             const char* result = motorA.moveRelative(param2.toInt(), MIN_POS_A, MAX_POS_A);
-            client.println(result);
+            if (strcmp(result, "Movement out of bounds") == 0) {
+                client.println("\"error\", \"Movement out of bounds.\"");
+            } else {
+                client.println("\"success\", \"Motor A moved successfully.\"");
+            }
         } else if (param1 == "B") {
             const char* result = motorB.moveRelative(param2.toInt(), MIN_POS_B, MAX_POS_B);
-            client.println(result);
+            if (strcmp(result, "Movement out of bounds") == 0) {
+                client.println("\"error\", \"Movement out of bounds.\"");
+            } else {
+                client.println("\"success\", \"Motor B moved successfully.\"");
+            }
         } else {
-            client.println("Invalid motor identifier.");
+            client.println("\"error\", \"Invalid motor identifier.\"");
         }
     } else if (command == "MOVE_ABS") {
         if (param1 == "A") {
             const char* result = motorA.moveTo(param2.toInt(), MIN_POS_A, MAX_POS_A);
-            client.println(result);
+            if (strcmp(result, "Movement out of bounds") == 0) {
+                client.println("\"error\", \"Movement out of bounds.\"");
+            } else {
+                client.println("\"success\", \"Motor A moved to position.\"");
+            }
         } else if (param1 == "B") {
             const char* result = motorB.moveTo(param2.toInt(), MIN_POS_B, MAX_POS_B);
-            client.println(result);
+            if (strcmp(result, "Movement out of bounds") == 0) {
+                client.println("\"error\", \"Movement out of bounds.\"");
+            } else {
+                client.println("\"success\", \"Motor B moved to position.\"");
+            }
         } else {
-            client.println("Invalid motor identifier.");
+            client.println("\"error\", \"Invalid motor identifier.\"");
         }
     } else if (command == "GETPOS") {
-        client.print("Motor A Position: ");
-        client.println(motorA.getCurrentPosition());
-        client.print("Motor B Position: ");
-        client.println(motorB.getCurrentPosition());
+        String posMessage = "Motor A Position: " + String(motorA.getCurrentPosition()) + ", Motor B Position: " + String(motorB.getCurrentPosition());
+        client.println("\"success\", \"" + posMessage + "\"");
     } else {
-        client.println("Unknown command.");
+        client.println("\"error\", \"Unknown command.\"");
     }
     client.flush(); // Ensure the response is sent
     client.stop();  // Close the connection after sending the response
