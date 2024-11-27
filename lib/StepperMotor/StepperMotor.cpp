@@ -60,7 +60,7 @@ void StepperMotor::setCurrentPosition(long pos) {
     _currentPos = pos;
 }
 
-// Execute a single step
+// Execute ½single step
 void StepperMotor::step(bool forward) {
     // Apply direction inversion
     bool actualForward = _invertDirection ? !forward : forward;
@@ -152,8 +152,8 @@ void StepperMotor::home(bool forward, int limitSwitchPin, bool activeState) {
 }
 
 // Move a specific number of steps relative to current position with bounds checking
-void StepperMotor::moveRelative(long steps, long minPos, long maxPos) {
-    if (steps == 0) return;
+const char* StepperMotor::moveRelative(long steps, long minPos, long maxPos) {
+    if (steps == 0) return "No movement needed.";
 
     bool forward = (steps > 0);
     long absSteps = abs(steps);
@@ -164,7 +164,7 @@ void StepperMotor::moveRelative(long steps, long minPos, long maxPos) {
     // Check bounds
     if (potentialPos < minPos || potentialPos > maxPos) {
         Serial.println("Movement out of bounds. Operation aborted.");
-        return;
+        return "Movement out of bounds.";
     }
 
     Serial.print("Moving ");
@@ -174,21 +174,25 @@ void StepperMotor::moveRelative(long steps, long minPos, long maxPos) {
     Serial.println(" steps.");
 
     moveSteps(absSteps, forward);
+
+    // Send response after move is complete
+    Serial.println("Move complete.");
+    return "Move complete.";
 }
 
 // Move to an absolute position with bounds checking
-void StepperMotor::moveTo(long position, long minPos, long maxPos) {
+const char* StepperMotor::moveTo(long position, long minPos, long maxPos) {
     // Ensure the target position is within bounds
     if (position < minPos || position > maxPos) {
         Serial.println("Target position out of bounds. Operation aborted.");
-        return;
+        return "Movement out of bounds.";
     }
 
     long steps = position - _currentPos;
 
     if (steps == 0) {
         Serial.println("Already at the desired position.");
-        return;
+        return "Already at the desired position.";
     }
 
     bool forward = (steps > 0);
@@ -200,6 +204,10 @@ void StepperMotor::moveTo(long position, long minPos, long maxPos) {
     Serial.println(position);
 
     moveSteps(absSteps, forward);
+
+    // Send response after move is complete
+    Serial.println("Move complete.");
+    return "Move complete.";
 }
 
 // Stop the motor by deactivating all coils

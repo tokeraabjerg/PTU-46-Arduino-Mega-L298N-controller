@@ -60,8 +60,9 @@ public:
      * @param steps    Number of steps to move relative to current position.
      * @param minPos   Minimum allowable position in steps.
      * @param maxPos   Maximum allowable position in steps.
+     * @return const char*  Message indicating the result of the operation.
      */
-    void moveRelative(long steps, long minPos, long maxPos);
+    const char* moveRelative(long steps, long minPos, long maxPos);
 
     /**
      * @brief Move the motor to an absolute position with bounds checking.
@@ -69,8 +70,9 @@ public:
      * @param position Desired absolute position in steps.
      * @param minPos   Minimum allowable position in steps.
      * @param maxPos   Maximum allowable position in steps.
+     * @return const char*  Message indicating the result of the operation.
      */
-    void moveTo(long position, long minPos, long maxPos);
+    const char* moveTo(long position, long minPos, long maxPos);
 
     /**
      * @brief Stop the motor by deactivating all coils.
