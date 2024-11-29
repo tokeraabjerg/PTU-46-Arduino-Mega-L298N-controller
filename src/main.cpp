@@ -28,7 +28,7 @@ const long MAX_POS_B = 2000;
 
 // Define Starting Positions
 const long START_POS_A = 2716;
-const long START_POS_B = 634;
+const long START_POS_B = 619;
 
 // Define Stepper Motors
 // MotorA (Driver A)
