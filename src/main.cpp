@@ -12,6 +12,9 @@ const int redLED = 23;   // LED for Motor B (red light)
 bool motorA_homed = false;
 bool motorB_homed = false;
 
+// Add a flag for homing loop
+bool homingLoopActive = false;
+
 // Define Limit Switch Pins
 const int LIMIT_SWITCH_A = 3; // Motor A's limit switch, activated when HIGH (at MIN_POS_A)
 const int LIMIT_SWITCH_B = 2; // Motor B's limit switch, activated when HIGH (at MAX_POS_B)
@@ -113,6 +116,7 @@ void setup() {
     Serial.println("Ready for commands:");
     Serial.println("Commands:");
     Serial.println("  HOME                     - Home both drivers A and B");
+    Serial.println("  HOME_LOOP                - Start/Stop continuous homing loop");
     Serial.println("  MOVE_REL A <steps>       - Move Driver A relative steps");
     Serial.println("  MOVE_REL B <steps>       - Move Driver B relative steps");
     Serial.println("  MOVE_ABS A <position>    - Move Driver A to absolute position");
@@ -156,7 +160,17 @@ void handleCommand(String commandLine, EthernetClient& client) {
         // Move Motor B by START_POS_B steps
         motorB.moveSteps(START_POS_B, true); // Assuming true is the forward direction
         client.println("\"success\", \"Homing Complete.\"");
-    } else if (command == "MOVE_REL") {
+    } 
+    else if (command == "HOME_LOOP") {
+        if (homingLoopActive) {
+            homingLoopActive = false;
+            client.println("\"success\", \"Homing loop stopped.\"");
+        } else {
+            homingLoopActive = true;
+            client.println("\"success\", \"Homing loop started.\"");
+        }
+    }
+    else if (command == "MOVE_REL") {
         if (param1 == "A") {
             const char* result = motorA.moveRelative(param2.toInt(), MIN_POS_A, MAX_POS_A);
             if (strcmp(result, "Movement out of bounds") == 0) {
@@ -232,5 +246,19 @@ void loop() {
             }
         }
         client.stop();
+    }
+
+    // Handle Homing Loop
+    if (homingLoopActive) {
+        motorA.home(false, LIMIT_SWITCH_A, HIGH);
+        motorA.setCurrentPosition(MIN_POS_A);
+        motorA.moveSteps(START_POS_A, true);
+        
+        motorB.home(false, LIMIT_SWITCH_B, HIGH);
+        motorB.setCurrentPosition(MIN_POS_B);
+        motorB.moveSteps(START_POS_B, true);
+        
+        // Short delay to prevent rapid looping
+        delay(1000);
     }
 }
