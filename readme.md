@@ -1,7 +1,7 @@
 # Dual Stepper Motor Control with Arduino
 
 ## Overview
-This project enables precise control of two stepper motors using an Arduino Mega. It features homing sequences, relative and absolute movements, direction inversion for Motor B, and limit switch integration to ensure accurate positioning. The project is tailor made to replace a proprietary and outdated controller for the Pan/Tilt unit PTU-46.
+This project enables precise control of two stepper motors using an Arduino Mega. It features homing sequences, relative and absolute movements, motor inversion, and limit switch integration to ensure accurate positioning. The project is tailor made to replace a proprietary and outdated controller for the Pan/Tilt unit PTU-46.
 
 ## Features
 - **Dual Motor Control:** Independently control two stepper motors.
