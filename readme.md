@@ -34,7 +34,7 @@ This project enables precise control of two stepper motors using an Arduino Mega
 ## Connectivity
 Two overall methods:
 - **Serial Connection:** Use a terminal such as PuTTY to connect to the Arduino's serial port. Set the baud rate to `9600` to send commands.
-- **Ethernet Connection:** Connect to the Arduino over Ethernet using the self-assigned IP `192.168.100.115` on port `80`. Send commands in the same manner as with the serial connection. You can use a terminal such as netcat (`nc`) to establish the connection or use custom code such as Python, see below.
+- **Ethernet Connection:** Connect to the Arduino over Ethernet using the self-assigned IP `192.168.100.115` on port `80`. Send commands in the same manner as with the serial connection. You can use a terminal such as netcat (`nc`) to establish the connection or use custom code such as Python, see below. You may have to configure your Ethernet IPv4 to be on the correct subnet. For example, setting your PC's IPv4 self-assigned IP to 192.168.1.10.
 
 
 ### Python Control Script
